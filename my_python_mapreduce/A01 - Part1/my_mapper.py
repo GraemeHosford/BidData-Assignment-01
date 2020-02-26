@@ -13,8 +13,7 @@
 # --------------------------------------------------------
 
 import sys
-import
-from collections import Counter
+import codecs
 
 
 # ------------------------------------------
@@ -42,7 +41,6 @@ def process_line(line):
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
-    pass
     # Create dict of all different words in file
     # Traverse file contents to populate dict
     # Go through lines in my_input_stream
@@ -51,16 +49,20 @@ def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
     # Add words in dict - Using a Counter might be easier
     # Write content of the dictionary to file
     # For each key (word) write content to output file
-    word_dict = Counter()
+    bike_run_out_dict = dict()
 
     for line in my_input_stream:
-        line = line.replace("\n", "")
-        line = line.replace("\t", " ")
-        line = line.strip()
+        line_tuple = process_line(line)
 
-        word_dict.update(line.split())
+        if line_tuple[0] is '0' and line_tuple[5] is '0':
+            name = line_tuple[1]
+            if name in bike_run_out_dict.keys():
+                bike_run_out_dict[name] = bike_run_out_dict[name] + 1
+            else:
+                bike_run_out_dict[name] = 1
 
-    x = 2
+    for key in bike_run_out_dict.keys():
+        my_output_stream.write(key + "\t(" + str(bike_run_out_dict[key]) + ")\n")
 
 
 # ------------------------------------------

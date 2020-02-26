@@ -45,13 +45,36 @@ def get_key_value(line):
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
-    pass
     # For each line in my_input_stream
     # Replace \n
     # Split on \t
     # Get number from split result
     # Add number to dict
     # Write dict output to file
+    current_location = ""
+    location_appearances = 0
+
+    for line in my_input_stream:
+        line = line.replace("\n", "")
+        line_values = line.split("\t")
+
+        location = line_values[0]
+        location_apps = int(line_values[1][1:-1])
+
+        if location == current_location:
+            location_appearances += location_apps
+        else:
+            if current_location != "":
+                my_output_stream.write(current_location + "\t(" + str(location_appearances) + ")\n")
+
+            current_location = location
+            location_appearances = location_apps
+
+    if current_location != "":
+        my_output_stream.write(current_location + "\t(" + str(location_appearances) + ")\n")
+
+    my_input_stream.close()
+    my_output_stream.close()
 
 # ------------------------------------------
 # FUNCTION my_main
