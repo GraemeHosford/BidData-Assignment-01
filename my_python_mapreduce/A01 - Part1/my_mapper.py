@@ -13,7 +13,8 @@
 # --------------------------------------------------------
 
 import sys
-import codecs
+import
+from collections import Counter
 
 
 # ------------------------------------------
@@ -50,6 +51,16 @@ def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
     # Add words in dict - Using a Counter might be easier
     # Write content of the dictionary to file
     # For each key (word) write content to output file
+    word_dict = Counter()
+
+    for line in my_input_stream:
+        line = line.replace("\n", "")
+        line = line.replace("\t", " ")
+        line = line.strip()
+
+        word_dict.update(line.split())
+
+    x = 2
 
 
 # ------------------------------------------
