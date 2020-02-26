@@ -51,8 +51,7 @@ def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
     # Get number from split result
     # Add number to dict
     # Write dict output to file
-    current_location = ""
-    location_appearances = 0
+    reducer_dict = dict()
 
     for line in my_input_stream:
         line = line.replace("\n", "")
@@ -61,17 +60,15 @@ def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
         location = line_values[0]
         location_apps = int(line_values[1][1:-1])
 
-        if location == current_location:
-            location_appearances += location_apps
+        if location in reducer_dict.keys():
+            reducer_dict[location] = reducer_dict[location] + location_apps
         else:
-            if current_location != "":
-                my_output_stream.write(current_location + "\t(" + str(location_appearances) + ")\n")
+            reducer_dict[location] = location_apps
 
-            current_location = location
-            location_appearances = location_apps
+    sorted_dict = sorted(reducer_dict.items(), key=lambda k: k[1], reverse=True)
 
-    if current_location != "":
-        my_output_stream.write(current_location + "\t(" + str(location_appearances) + ")\n")
+    for item in sorted_dict:
+        my_output_stream.write(item[0] + "\t(" + str(item[1]) + ")\n")
 
     my_input_stream.close()
     my_output_stream.close()
