@@ -45,7 +45,16 @@ def get_key_value(line):
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
-    pass
+    num_times_empty = 0
+
+    for line in my_input_stream:
+        line = line.replace("\n", "")
+        line_vals = line.split("\t")
+
+        num_times_empty += int(line_vals[1][1:-1])
+
+    my_output_stream.write("total\t(" + str(num_times_empty) + ")")
+
 
 # ------------------------------------------
 # FUNCTION my_main

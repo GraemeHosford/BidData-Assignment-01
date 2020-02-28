@@ -55,7 +55,28 @@ def process_line(line):
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
-    pass
+    num_run_outs = 0
+    last_hour = -1
+
+    for line in my_input_stream:
+        line_info = process_line(line)
+
+        if line_info[1] == my_mapper_input_parameters[0]:
+            time = line_info[4].split(" ")
+            day = get_day_of_week(time[0])
+            hour = time[1].split(":")[0]
+
+            day_time_output = day + "_" + hour
+
+            if line_info[0] is '0' and line_info[5] is '0':
+                num_run_outs += 1
+
+            if hour != last_hour:
+                if num_run_outs > 0:
+                    my_output_stream.write(day_time_output + "\t(" + str(num_run_outs) + ")\n")
+
+                num_run_outs = 0
+                last_hour = hour
 
 # ------------------------------------------
 # FUNCTION my_main
