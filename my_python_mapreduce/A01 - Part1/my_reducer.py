@@ -41,16 +41,11 @@ def get_key_value(line):
     # 5. We return res
     return res
 
+
 # ------------------------------------------
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
-    # For each line in my_input_stream
-    # Replace \n
-    # Split on \t
-    # Get number from split result
-    # Add number to dict
-    # Write dict output to file
     reducer_dict = dict()
 
     for line in my_input_stream:

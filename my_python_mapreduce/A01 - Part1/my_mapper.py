@@ -42,14 +42,6 @@ def process_line(line):
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
-    # Create dict of all different words in file
-    # Traverse file contents to populate dict
-    # Go through lines in my_input_stream
-    # Get rid of special chars like \n and \t - can use replace for \t and \n, rstrip and strip
-    # functions for leading and ending spaces
-    # Add words in dict - Using a Counter might be easier
-    # Write content of the dictionary to file
-    # For each key (word) write content to output file
     bike_run_out_dict = get_init_dict(my_input_stream)
 
     for line in my_input_stream:
