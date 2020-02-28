@@ -14,6 +14,7 @@
 
 import sys
 import codecs
+from collections import Counter
 
 
 # ------------------------------------------
@@ -49,20 +50,40 @@ def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
     # Add words in dict - Using a Counter might be easier
     # Write content of the dictionary to file
     # For each key (word) write content to output file
-    bike_run_out_dict = dict()
+    bike_run_out_dict = get_init_dict(my_input_stream)
 
     for line in my_input_stream:
         line_tuple = process_line(line)
 
         if line_tuple[0] is '0' and line_tuple[5] is '0':
             name = line_tuple[1]
-            if name in bike_run_out_dict.keys():
-                bike_run_out_dict[name] = bike_run_out_dict[name] + 1
-            else:
-                bike_run_out_dict[name] = 1
+            bike_run_out_dict.update([name])
 
     for key in bike_run_out_dict.keys():
-        my_output_stream.write(key + "\t(" + str(bike_run_out_dict[key]) + ")\n")
+        string = key + "\t(" + str(bike_run_out_dict[key]) + ")\n"
+        my_output_stream.write(string)
+
+    my_input_stream.close()
+    my_output_stream.close()
+
+
+def get_init_dict(my_input_steam):
+    """Adding all locations to dict with a starting count of 0 to make sure all output gets printed"""
+    dictionary = Counter()
+
+    for line in my_input_steam:
+        location_name = process_line(line)[1]
+        if location_name not in dictionary.keys():
+            dictionary.update([location_name])
+
+    for key in dictionary.keys():
+        # Must zero out all values as they will have default of 1
+        dictionary[key] = 0
+
+    # Going back to start of file so it can be read in my_mapper function
+    my_input_steam.seek(0)
+
+    return dictionary
 
 
 # ------------------------------------------
