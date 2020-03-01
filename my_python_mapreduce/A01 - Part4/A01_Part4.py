@@ -15,6 +15,7 @@
 import os
 import codecs
 
+
 # ------------------------------------------
 #
 # HIGHER ORDER FUNCTIONS
@@ -36,6 +37,7 @@ def my_map(funct, my_list):
     # 3. We return res
     return res
 
+
 # ------------------------------------------
 # FUNCTION my_filter
 # ------------------------------------------
@@ -52,6 +54,7 @@ def my_filter(funct, my_list):
     # 3. We return res
     return res
 
+
 # ------------------------------------------
 # FUNCTION my_fold
 # ------------------------------------------
@@ -65,6 +68,7 @@ def my_fold(funct, accum, my_list):
 
     # 3. We return res
     return res
+
 
 # ------------------------------------------
 #
@@ -87,10 +91,11 @@ def process_line(line):
 
     # 4. We assign res
     if (len(params) == 7):
-        res = ( int(params[0]), params[1], float(params[2]), float(params[3]), params[4], int(params[5]), int(params[6]) )
+        res = (int(params[0]), params[1], float(params[2]), float(params[3]), params[4], int(params[5]), int(params[6]))
 
     # 5. We return res
     return res
+
 
 # ------------------------------------------
 #
@@ -128,20 +133,25 @@ def step_3_filter_function(item):
 def remove_locations(item):
     item = item.replace("\n", "")
     item_info = item.split(", ")
-    location = item_info[0][1:]
+    location = item_info[0][2:-1]
 
-    return location == "'Lapp's Quay'" or location == "'South Main St.'"
+    valid_station = location in station_names
+    return valid_station
 
 
 def all_values_one(item):
     item = item.split(", ")
     return str(item[0]) + ", 1)"
 
+
+def add_one(accum, item):
+    return accum + 1
+
+
 # ------------------------------------------
 # FUNCTION my_main
 # ------------------------------------------
 def my_main(my_list, station_names):
-
     # --------------- STEP 1 ------------------------#
 
     # 1. Apply the Higher-Order function my_map provided above,
@@ -202,10 +212,11 @@ def my_main(my_list, station_names):
     # 6. Apply the the Higher-Order function my_fold provided above,
     #    so as to compute the total amount of ran outs
 
-    res = None  # -> Replace None with a call to my_fold
+    res = my_fold(add_one, 0, my_list)  # -> Replace None with a call to my_fold
 
     print("\n\n\n\n\n------ STEP 6 ------\n")
     print(res)
+
 
 # ---------------------------------------------------------------
 #           PYTHON EXECUTION
