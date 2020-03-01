@@ -40,6 +40,16 @@ def get_key_value(line):
     # 5. We return res
     return res
 
+
+def convert_hours_to_seconds(hour: str) -> int:
+    hour_vals = hour.split(":")
+    hour = int(hour_vals[0])
+    minutes = int(hour_vals[1])
+    seconds = int(hour_vals[2])
+
+    return (hour * 60 * 60) + (minutes * 60) + seconds
+
+
 # ------------------------------------------
 # FUNCTION my_reduce
 # ------------------------------------------
@@ -47,27 +57,25 @@ def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
     actual_run_outs = list()
     continuations = 1
     last_date = ""
-    last_hour = -1
-    last_minute = -1
+    last_hour_part = ""
 
     for line in my_input_stream:
         day_hour = get_key_value(line)
 
         day_part = day_hour[0]
         hour_part = day_hour[1]
-        hour_minute = hour_part.split(":")
-        hour_int = int(hour_minute[0])
-        minute_int = int(hour_minute[1])
 
-        # Easiest to convert hours into minutes for maths
-        hours_to_mins = hour_int * 60
-        last_hour_to_mins = last_hour * 60
-        
-        if (hours_to_mins + minute_int) == (last_hour_to_mins + last_minute + 5):
+        hour_to_seconds = convert_hours_to_seconds(hour_part)
+
+        if last_hour_part != "":
+            last_hour_to_seconds = convert_hours_to_seconds(last_hour_part)
+        else:
+            last_hour_to_seconds = -10
+
+        if hour_to_seconds == (last_hour_to_seconds + (5 * 60)):
             continuations += 1
 
-        last_hour = hour_int
-        last_minute = minute_int
+        last_hour_part = hour_part
 
         output_string = day_part + "\t(" + hour_part + ", " + str(continuations) + ")\n"
         actual_run_outs.append(output_string)
