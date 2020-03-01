@@ -44,7 +44,41 @@ def get_key_value(line):
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
-    pass
+    actual_run_outs = list()
+    continuations = 1
+    last_date = ""
+    last_hour = -1
+    last_minute = -1
+
+    for line in my_input_stream:
+        day_hour = get_key_value(line)
+
+        day_part = day_hour[0]
+        hour_part = day_hour[1]
+        hour_minute = hour_part.split(":")
+        hour_int = int(hour_minute[0])
+        minute_int = int(hour_minute[1])
+
+        # Easiest to convert hours into minutes for maths
+        hours_to_mins = hour_int * 60
+        last_hour_to_mins = last_hour * 60
+        
+        if (hours_to_mins + minute_int) == (last_hour_to_mins + last_minute + 5):
+            continuations += 1
+
+        last_hour = hour_int
+        last_minute = minute_int
+
+        output_string = day_part + "\t(" + hour_part + ", " + str(continuations) + ")\n"
+        actual_run_outs.append(output_string)
+        continuations = 1
+
+    for item in actual_run_outs:
+        my_output_stream.write(item)
+
+    my_input_stream.close()
+    my_output_stream.close()
+
 
 # ------------------------------------------
 # FUNCTION my_main
