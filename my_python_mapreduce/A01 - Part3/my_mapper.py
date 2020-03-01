@@ -35,11 +35,34 @@ def process_line(line):
     # 5. We return res
     return res
 
+
 # ------------------------------------------
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
-    pass
+    output_list = list()
+
+    for line in my_input_stream:
+        line_info = process_line(line)
+
+        if line_info[1] == my_mapper_input_parameters[0]:
+            if line_info[0] is '0' and line_info[5] is '0':
+                date_time = line_info[4].split(" ")
+                date = date_time[0]
+
+                # Reversing date format to get correct output
+                date_parts = date.split("-")
+                date = date_parts[2] + "-" + date_parts[1] + "-" + date_parts[0]
+
+                time = date_time[1]
+
+                output_list.append(date + "\t(" + time + ")\n")
+
+    for info in output_list:
+        my_output_stream.write(info)
+
+    my_input_stream.close()
+    my_output_stream.close()
 
 # ------------------------------------------
 # FUNCTION my_main
