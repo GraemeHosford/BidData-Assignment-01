@@ -51,32 +51,30 @@ def process_line(line):
     # 5. We return res
     return res
 
+
+def get_hour_of_day(hour: str) -> str:
+    return hour.split(":")[0]
+
+
 # ------------------------------------------
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(my_input_stream, my_output_stream, my_mapper_input_parameters):
-    num_run_outs = 0
-    last_hour = -1
+    res = dict()
 
     for line in my_input_stream:
         line_info = process_line(line)
+        date = line_info[4]
+        day = get_day_of_week(date.split(" ")[0])
+        hour = get_hour_of_day(date.split(" ")[1])
 
-        if line_info[1] == my_mapper_input_parameters[0]:
-            time = line_info[4].split(" ")
-            day = get_day_of_week(time[0])
-            hour = time[1].split(":")[0]
+        if line_info[0] is '0' and line_info[5] is '0' and line_info[1] == my_mapper_input_parameters[0]:
+            key = day + "_" + hour
+            res.setdefault(key, 0)
+            res[key] += 1
 
-            day_time_output = day + "_" + hour
-
-            if line_info[0] is '0' and line_info[5] is '0':
-                num_run_outs += 1
-
-            if hour != last_hour:
-                if num_run_outs > 0:
-                    my_output_stream.write(day_time_output + "\t(" + str(num_run_outs) + ")\n")
-
-                num_run_outs = 0
-                last_hour = hour
+    for key in res.keys():
+        my_output_stream.write(key + "\t(" + str(res[key]) + ")\n")
 
 # ------------------------------------------
 # FUNCTION my_main
