@@ -58,10 +58,11 @@ def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
         else:
             res[place] = run_outs
 
-    sorted_dict = sorted(res.items(), key=lambda k: k[1], reverse=True)
+    sorted_dict = sorted(res.items(), key=lambda k: (k[1], k[0]), reverse=True)
 
     for item in sorted_dict:
-        my_output_stream.write(item[0] + "\t(" + str(item[1]) + ", " + str(float(item[1] / total)) + ")\n")
+        percent = float(item[1] / total) * 100
+        my_output_stream.write(item[0] + "\t(" + str(item[1]) + ", " + str(percent) + ")\n")
 
     my_input_stream.close()
     my_output_stream.close()
