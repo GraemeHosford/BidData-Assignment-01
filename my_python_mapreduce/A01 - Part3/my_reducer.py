@@ -92,7 +92,8 @@ def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
             else:
                 reduce_list[len(reduce_list) - continuations - 2] = tuple(
                     [reduce_list[len(reduce_list) - continuations - 2][0],
-                     reduce_list[len(reduce_list) - continuations - 2][1], continuations + 1]
+                     reduce_list[len(reduce_list) - continuations - 2][1],
+                     continuations + 1]
                 )
 
                 for i in range(continuations):
