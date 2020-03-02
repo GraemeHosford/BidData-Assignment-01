@@ -14,10 +14,12 @@
 
 import sys
 import codecs
+from datetime import timedelta, datetime
 
-#---------------------------------------
+
+# ---------------------------------------
 #  FUNCTION get_key_value
-#---------------------------------------
+# ---------------------------------------
 def get_key_value(line):
     # 1. We create the output variable
     res = ()
@@ -41,51 +43,64 @@ def get_key_value(line):
     return res
 
 
-def convert_hours_to_seconds(hour: str) -> int:
-    hour_vals = hour.split(":")
-    hour = int(hour_vals[0])
-    minutes = int(hour_vals[1])
-    seconds = int(hour_vals[2])
+def get_num_minutes_ago(date: str, time: str, time_interval: int):
+    date_info = date.split("-")
+    time_info = time.split(":")
 
-    return (hour * 60 * 60) + (minutes * 60) + seconds
+    year = int(date_info[0])
+    month = int(date_info[1])
+    day = int(date_info[2])
+
+    hour = int(time_info[0])
+    minute = int(time_info[1])
+    second = int(time_info[2])
+
+    date_time_object = datetime(year, month, day, hour, minute, second)
+
+    time_minutes_ago = date_time_object - timedelta(minutes=time_interval)
+
+    date_string = time_minutes_ago.strftime("%Y-%m-%d")
+    time_string = time_minutes_ago.strftime("%H:%M:%S")
+
+    return (date_string, time_string)
 
 
 # ------------------------------------------
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
-    actual_run_outs = list()
-    continuations = 1
-    last_date = ""
-    last_hour_part = ""
+    time_interval = my_reducer_input_parameters[0]
+    reduce_list = list()
+    continuations = 0
 
     for line in my_input_stream:
-        day_hour = get_key_value(line)
+        line_info = get_key_value(line)
+        date = line_info[0]
+        time = line_info[1]
 
-        day_part = day_hour[0]
-        hour_part = day_hour[1]
+        reduce_list += [([date, time, 1])]
 
-        hour_to_seconds = convert_hours_to_seconds(hour_part)
+        previous_time_interval = get_num_minutes_ago(date, time, time_interval)
+        previous_date = previous_time_interval[0]
+        previous_time = previous_time_interval[1]
 
-        if last_hour_part != "":
-            last_hour_to_seconds = convert_hours_to_seconds(last_hour_part)
-        else:
-            last_hour_to_seconds = -10
+        if len(reduce_list) > 1:
+            previous = reduce_list[len(reduce_list) - 2]
 
-        if hour_to_seconds == (last_hour_to_seconds + (my_reducer_input_parameters[0] * 60)):
-            continuations += 1
+            if previous[0] == previous_date and previous[1] == previous_time:
+                continuations += 1
+            else:
+                reduce_list[len(reduce_list) - continuations - 2] = tuple(
+                    [reduce_list[len(reduce_list) - continuations - 2][0],
+                     reduce_list[len(reduce_list) - continuations - 2][1], continuations + 1]
+                )
 
-        last_hour_part = hour_part
+                for i in range(continuations):
+                    reduce_list.pop(-2)
+                continuations = 0
 
-        output_string = day_part + "\t(" + hour_part + ", " + str(continuations) + ")\n"
-        actual_run_outs.append(output_string)
-        continuations = 1
-
-    for item in actual_run_outs:
-        my_output_stream.write(item)
-
-    my_input_stream.close()
-    my_output_stream.close()
+    for item in reduce_list:
+        my_output_stream.write(str(item[0]) + "\t(" + str(item[1]) + ", " + str(item[2]) + ")\n")
 
 
 # ------------------------------------------
@@ -95,8 +110,7 @@ def my_main(local_False_Cloudera_True,
             my_reducer_input_parameters,
             input_file_example,
             output_file_example
-           ):
-
+            ):
     # 1. We select the input and output streams based on our working mode
     my_input_stream = None
     my_output_stream = None
@@ -113,6 +127,7 @@ def my_main(local_False_Cloudera_True,
 
     # 2. We trigger my_reducer
     my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters)
+
 
 # ---------------------------------------------------------------
 #           PYTHON EXECUTION
@@ -141,4 +156,4 @@ if __name__ == '__main__':
             my_reducer_input_parameters,
             input_file_example,
             output_file_example
-           )
+            )
