@@ -145,7 +145,7 @@ def all_values_one(item):
 
 
 def add_one(accum, item):
-    return accum + 1
+    return accum + int(item.split(", ")[1].rstrip(")"))
 
 
 # ------------------------------------------
