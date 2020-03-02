@@ -45,7 +45,26 @@ def get_key_value(line):
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
-    pass
+    res = dict()
+    total = my_reducer_input_parameters[0]
+
+    for line in my_input_stream:
+        line_info = get_key_value(line)
+        place = line_info[0]
+        run_outs = line_info[1]
+
+        if place in res.keys():
+            res[place] += run_outs
+        else:
+            res[place] = run_outs
+
+    sorted_dict = sorted(res.items(), key=lambda k: k[1], reverse=True)
+
+    for item in sorted_dict:
+        my_output_stream.write(item[0] + "\t(" + str(item[1]) + ", " + str(float(item[1] / total)) + ")\n")
+
+    my_input_stream.close()
+    my_output_stream.close()
 
 # ------------------------------------------
 # FUNCTION my_main
