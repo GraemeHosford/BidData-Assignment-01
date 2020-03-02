@@ -72,7 +72,7 @@ def my_reduce(my_input_stream, my_output_stream, my_reducer_input_parameters):
         else:
             last_hour_to_seconds = -10
 
-        if hour_to_seconds == (last_hour_to_seconds + (5 * 60)):
+        if hour_to_seconds == (last_hour_to_seconds + (my_reducer_input_parameters[0] * 60)):
             continuations += 1
 
         last_hour_part = hour_part
